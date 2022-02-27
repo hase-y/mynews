@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Profile;
+use App\Phistory;
+use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
@@ -63,8 +65,38 @@ class ProfileController extends Controller
       return view('admin.profile.edit', ['profile_form' => $profile]);
   }
     
-    public function update()
+    public function update(Request $request)
     {
-        return redirect('admin/profile/edit');
+        $this->validate($request, Profile::$rules);
+        $profile = Profile::find($request->id);
+        $profile_form = $request->all();
+        //if ($request->remove == 'true') {
+            //$news_form['image_path'] = null;
+        //} elseif ($request->file('image')) {
+            //$path = $request->file('image')->store('public/image');
+           // $news_form['image_path'] = basename($path);
+        //} else {
+            //$news_form['image_path'] = $news->image_path;
+        //}
+
+        unset($profile_form['_token']);
+        unset($profile_form['image']);
+        unset($profile_form['remove']);
+        $profile->fill($profile_form)->save();
+        
+        $phistory = new Phistory();
+        $phistory->profile_id = $profile->id;
+        $phistory->edited_at = Carbon::now();
+        $phistory->save();
+        
+        return redirect('admin/profile/');
     }
+    public function delete(Request $request)
+  {
+      // 該当するProfile Modelを取得
+      $profile = Profile::find($request->id);
+      // 削除する
+      $profile->delete();
+      return redirect('admin/profile/');
+  }  
 }
