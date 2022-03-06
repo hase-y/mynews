@@ -19,6 +19,7 @@
                             @endforeach
                         </ul>
                     @endif
+                <p><font size="2">タイトル、本文の記載と画像の投稿をお願いします。</font></p>
                     <div class="form-group row">
                         <label class="col-md-2" for="title">タイトル</label>
                         <div class="col-md-10">
